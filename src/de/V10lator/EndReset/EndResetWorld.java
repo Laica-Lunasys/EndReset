@@ -13,7 +13,7 @@ class EndResetWorld implements Serializable {
      * 
      * @param hours
      */
-    public EndResetWorld(long hours) {
+    public EndResetWorld(final long hours) {
         this.hours = hours * 60 * 60;
         lastReset = System.currentTimeMillis() * 1000;
     }

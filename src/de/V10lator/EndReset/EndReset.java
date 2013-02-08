@@ -57,34 +57,36 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
     @Override
     @SuppressWarnings("unchecked")
     public void onEnable() {
-        Server s = getServer();
-        Logger log = getLogger();
-        BukkitScheduler bs = s.getScheduler();
+        final Server s = getServer();
+        final Logger log = getLogger();
+        final BukkitScheduler bs = s.getScheduler();
         try {
             File f = new File(getDataFolder(), "EndReset.sav");
             boolean nf;
             if (!f.exists()) {
                 // TODO: Remove (holds compat for < 1.4)
-                File f2 = new File("plugins/EndReset.sav");
+                final File f2 = new File("plugins/EndReset.sav");
                 if (f2.exists()) {
                     getDataFolder().mkdirs();
                     f2.renameTo(f);
                     f = f2;
                     nf = false;
-                } else
+                } else {
                     nf = true;
-            } else
+                }
+            } else {
                 nf = false;
-            if (nf)
+            }
+            if (nf) {
                 getDataFolder().mkdir();
-            else {
-                ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
+            } else {
+                final ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
                 // TODO: Rewrite (no more Object[] reading - holds compat for <
                 // 1.5)
                 int sfv;
                 Object[] sa = null;
                 try {
-                    Object o = in.readObject();
+                    final Object o = in.readObject();
                     if (o == null || !(o instanceof Object[])) {
                         log.info("ERROR: セーブファイルを読み込めません！");
                         s.getPluginManager().disablePlugin(this);
@@ -93,7 +95,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
                     }
                     sa = (Object[]) o;
                     sfv = (Integer) sa[0];
-                } catch (OptionalDataException e) {
+                } catch (final OptionalDataException e) {
                     sfv = in.readInt();
                 }
 
@@ -101,57 +103,71 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
                     HashMap<String, Long> tmpMap;
                     boolean save = false;
                     if (sfv < 4) {
-                        for (EndResetChunk vc : (ArrayList<EndResetChunk>) sa[1]) {
-                            if (resetchunks.containsKey(vc.world))
+                        for (final EndResetChunk vc : (ArrayList<EndResetChunk>) sa[1]) {
+                            if (resetchunks.containsKey(vc.world)) {
                                 tmpMap = resetchunks.get(vc.world);
-                            else {
+                            } else {
                                 tmpMap = new HashMap<String, Long>();
                                 resetchunks.put(vc.world, tmpMap);
                             }
                             tmpMap.put(vc.x + "/" + vc.z, vc.v);
                         }
                         save = true;
-                    } else
-                        for (Entry<String, HashMap<String, Long>> e : ((HashMap<String, HashMap<String, Long>>) sa[1]).entrySet())
+                    } else {
+                        for (final Entry<String, HashMap<String, Long>> e : ((HashMap<String, HashMap<String, Long>>) sa[1]).entrySet()) {
                             resetchunks.put(e.getKey(), e.getValue());
-                    for (Entry<String, Long> e : ((HashMap<String, Long>) sa[2]).entrySet())
+                        }
+                    }
+                    for (final Entry<String, Long> e : ((HashMap<String, Long>) sa[2]).entrySet()) {
                         cvs.put(e.getKey(), e.getValue());
+                    }
                     int i;
-                    if (sfv < 2)
+                    if (sfv < 2) {
                         i = 4;
-                    else
+                    } else {
                         i = 3;
-                    for (String regen : (HashSet<String>) sa[i])
+                    }
+                    for (final String regen : (HashSet<String>) sa[i]) {
                         reg.add(regen);
+                    }
                     it = (Long) sa[i + 1];
                     if (sfv > 2) {
-                        for (String dh : (HashSet<String>) sa[5])
+                        for (final String dh : (HashSet<String>) sa[5]) {
                             dontHandle.add(dh);
-                        for (Entry<String, EndResetWorld> e : ((HashMap<String, EndResetWorld>) sa[6]).entrySet())
+                        }
+                        for (final Entry<String, EndResetWorld> e : ((HashMap<String, EndResetWorld>) sa[6]).entrySet()) {
                             forceReset.put(e.getKey(), e.getValue());
-                        for (Entry<String, Short> e : ((HashMap<String, Short>) sa[7]).entrySet())
+                        }
+                        for (final Entry<String, Short> e : ((HashMap<String, Short>) sa[7]).entrySet()) {
                             dragonAmount.put(e.getKey(), e.getValue());
+                        }
                     }
                     this.save = save;
                 } else {
                     RegenThread rt;
                     World wo;
                     long tr;
-                    for (Entry<String, HashMap<String, Long>> e : ((HashMap<String, HashMap<String, Long>>) in.readObject()).entrySet())
+                    for (final Entry<String, HashMap<String, Long>> e : ((HashMap<String, HashMap<String, Long>>) in.readObject()).entrySet()) {
                         resetchunks.put(e.getKey(), e.getValue());
-                    for (Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet())
+                    }
+                    for (final Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet()) {
                         cvs.put(e.getKey(), e.getValue());
-                    for (String regen : (HashSet<String>) in.readObject())
+                    }
+                    for (final String regen : (HashSet<String>) in.readObject()) {
                         reg.add(regen);
+                    }
                     it = in.readLong();
-                    for (String dh : (HashSet<String>) in.readObject())
+                    for (final String dh : (HashSet<String>) in.readObject()) {
                         dontHandle.add(dh);
-                    for (Entry<String, EndResetWorld> e : ((HashMap<String, EndResetWorld>) in.readObject()).entrySet())
+                    }
+                    for (final Entry<String, EndResetWorld> e : ((HashMap<String, EndResetWorld>) in.readObject()).entrySet()) {
                         forceReset.put(e.getKey(), e.getValue());
-                    for (Entry<String, Short> e : ((HashMap<String, Short>) in.readObject()).entrySet())
+                    }
+                    for (final Entry<String, Short> e : ((HashMap<String, Short>) in.readObject()).entrySet()) {
                         dragonAmount.put(e.getKey(), e.getValue());
-                    for (Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet()) {
-                        String w = e.getKey();
+                    }
+                    for (final Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet()) {
+                        final String w = e.getKey();
                         reg.add(w);
                         wo = s.getWorld(w);
                         if (wo != null) {
@@ -164,7 +180,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
 
                 in.close();
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.info("セーブファイルに書き込めません！");
             e.printStackTrace();
             s.getPluginManager().disablePlugin(this);
@@ -173,8 +189,10 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
 
         saveConfig();
 
-        for (World w : s.getWorlds()) {
-            if (w.getEnvironment() != Environment.THE_END) continue;
+        for (final World w : s.getWorlds()) {
+            if (w.getEnvironment() != Environment.THE_END) {
+                continue;
+            }
             onWorldLoad(new WorldLoadEvent(w));
         }
 
@@ -182,41 +200,43 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
         bs.scheduleSyncRepeatingTask(this, this, 1L, 1L);
         bs.scheduleSyncRepeatingTask(this, new ForceThread(), 20L, 72000L);
 
-        PluginManager pm = s.getPluginManager();
+        final PluginManager pm = s.getPluginManager();
         pm.registerEvents(this, this);
         log.info("v" + getDescription().getVersion() + " enabled!");
     }
 
     @Override
     public void onDisable() {
-        Server s = getServer();
+        final Server s = getServer();
         s.getScheduler().cancelTasks(this);
-        if (save) (new SaveThread()).run();
+        if (save) {
+            (new SaveThread()).run();
+        }
         s.getLogger().info("[" + getName() + "] disabled!");
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         if (!sender.hasPermission("endreset.config")) return true;
 
         if (args.length < 1) {
             if (!(sender instanceof Player)) return true;
 
-            World world = ((Player) sender).getWorld();
+            final World world = ((Player) sender).getWorld();
             if (world.getEnvironment() != Environment.THE_END) {
                 sender.sendMessage(ChatColor.RED + "ここはエンドワールドではありません！");
                 return true;
             }
-            String wn = world.getName();
+            final String wn = world.getName();
             Actions.broadcastMessage("&c[SakuraServer] '&6" + wn + "&d'をリセットしています.. (" + sender.getName() + ")");
 
-            for (Player p : world.getPlayers()) {
+            for (final Player p : world.getPlayers()) {
                 p.teleport(getServer().getWorlds().get(0).getSpawnLocation());
                 Actions.message(p, "&c[SakuraServer] &dこのワールドはリセットされます！");
             }
 
-            long toRun = 1L;
-            RegenThread t = new RegenThread(wn, world.getFullTime() + toRun);
+            final long toRun = 1L;
+            final RegenThread t = new RegenThread(wn, world.getFullTime() + toRun);
             pids.put(wn, getServer().getScheduler().scheduleSyncDelayedTask(this, t, toRun));
             threads.put(wn, t);
             return true;
@@ -226,7 +246,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
             it = Integer.parseInt(args[0]);
             sender.sendMessage("New inactive time: " + it + " minutes");
             it = it * 20 * 60;
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             if (args[0].equalsIgnoreCase("force")) {
                 if (args.length < 3) {
                     sender.sendMessage("/EndReset force add/remove World_Name");
@@ -239,7 +259,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
                     }
                     try {
                         forceReset.put(args[2], new EndResetWorld(Integer.parseInt(args[3])));
-                    } catch (NumberFormatException ex) {
+                    } catch (final NumberFormatException ex) {
                         sender.sendMessage("Invalid hours: " + args[3]);
                         return true;
                     }
@@ -275,31 +295,33 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
                 short a;
                 try {
                     a = Short.parseShort(args[2]);
-                } catch (NumberFormatException ex) {
+                } catch (final NumberFormatException ex) {
                     sender.sendMessage("Invalid amount: " + args[2]);
                     return true;
                 }
-                if (a == 1)
+                if (a == 1) {
                     dragonAmount.remove(args[1]);
-                else
+                } else {
                     dragonAmount.put(args[1], a);
+                }
                 sender.sendMessage(ChatColor.BLUE + "New dragon amount for world " + args[1] + ": " + a);
             } else if (args[0].equalsIgnoreCase("list")) {
-                List<World> wl = getServer().getWorlds();
+                final List<World> wl = getServer().getWorlds();
                 if (wl.isEmpty()) {
                     sender.sendMessage(ChatColor.RED + "No worlds found!");
                     return true;
                 }
-                StringBuilder sb = new StringBuilder();
+                final StringBuilder sb = new StringBuilder();
                 World world;
                 boolean first = true;
                 for (int i = 1; i < wl.size(); i++) {
                     world = wl.get(i);
                     if (world != null && world.getEnvironment() == Environment.THE_END) {
-                        if (!first)
+                        if (!first) {
                             sb.append(' ');
-                        else
+                        } else {
                             first = false;
+                        }
                         sb.append(world.getName());
                     }
                 }
@@ -312,25 +334,30 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
         return true;
     }
 
-    private void regen(World world) {
-        String wn = world.getName();
+    private void regen(final World world) {
+        final String wn = world.getName();
         long cv = cvs.get(wn) + 1;
-        if (cv == Long.MAX_VALUE) cv = Long.MIN_VALUE;
+        if (cv == Long.MAX_VALUE) {
+            cv = Long.MIN_VALUE;
+        }
         cvs.put(wn, cv);
-        for (Chunk c : world.getLoadedChunks())
+        for (final Chunk c : world.getLoadedChunks()) {
             onChunkLoad(new ChunkLoadEvent(c, false));
+        }
 
         short a;
-        if (dragonAmount.containsKey(wn))
+        if (dragonAmount.containsKey(wn)) {
             a = dragonAmount.get(wn);
-        else
+        } else {
             a = 1;
+        }
         if (a > 1) {
             a--;
-            Location loc = world.getSpawnLocation();
+            final Location loc = world.getSpawnLocation();
             loc.setY(world.getMaxHeight() - 1);
-            for (short i = 0; i < a; i++)
+            for (short i = 0; i < a; i++) {
                 world.spawnEntity(loc, EntityType.ENDER_DRAGON);
+            }
         }
         save = true;
         Actions.broadcastMessage("&c[SakuraServer] &dエンドワールド'&6" + wn + "&d'はリセットされました！");
@@ -340,21 +367,25 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
     public void run() {
         int pc;
         int pid;
-        BukkitScheduler s = getServer().getScheduler();
-        for (World w : getServer().getWorlds()) {
-            if (w.getEnvironment() != Environment.THE_END) continue;
-            String wn = w.getName();
-            if (!reg.contains(wn)) continue;
+        final BukkitScheduler s = getServer().getScheduler();
+        for (final World w : getServer().getWorlds()) {
+            if (w.getEnvironment() != Environment.THE_END) {
+                continue;
+            }
+            final String wn = w.getName();
+            if (!reg.contains(wn)) {
+                continue;
+            }
             pc = w.getPlayers().size();
             if (pc < 1 && !pids.containsKey(wn)) {
                 long tr;
-                if (!suspendedTasks.containsKey(wn))
+                if (!suspendedTasks.containsKey(wn)) {
                     tr = it;
-                else {
+                } else {
                     tr = suspendedTasks.get(wn);
                     suspendedTasks.remove(wn);
                 }
-                RegenThread t = new RegenThread(wn, w.getFullTime() + tr);
+                final RegenThread t = new RegenThread(wn, w.getFullTime() + tr);
                 pids.put(wn, s.scheduleSyncDelayedTask(EndReset.this, t, tr));
                 threads.put(wn, t);
             } else if (pc > 0 && pids.containsKey(wn)) {
@@ -371,7 +402,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
         private final String wn;
         private final long toRun;
 
-        private RegenThread(String wn, long toRun) {
+        private RegenThread(final String wn, final long toRun) {
             this.wn = wn;
             this.toRun = toRun;
         }
@@ -379,15 +410,17 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
         @Override
         public void run() {
             if (!pids.containsKey(wn)) return;
-            World w = getServer().getWorld(wn);
-            if (w != null) regen(w);
+            final World w = getServer().getWorld(wn);
+            if (w != null) {
+                regen(w);
+            }
             reg.remove(wn);
             pids.remove(wn);
             threads.remove(this);
         }
 
         long getRemainingDelay() {
-            World w = getServer().getWorld(wn);
+            final World w = getServer().getWorld(wn);
             if (w == null) return -1;
             return toRun - w.getFullTime();
         }
@@ -397,10 +430,10 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
         @Override
         public void run() {
             if (forceReset.isEmpty()) return;
-            long now = System.currentTimeMillis() * 1000;
+            final long now = System.currentTimeMillis() * 1000;
             EndResetWorld vw;
-            Server s = getServer();
-            for (Entry<String, EndResetWorld> e : forceReset.entrySet()) {
+            final Server s = getServer();
+            for (final Entry<String, EndResetWorld> e : forceReset.entrySet()) {
                 vw = e.getValue();
                 if (vw.lastReset + vw.hours >= now) {
                     regen(s.getWorld(e.getKey()));
@@ -416,12 +449,15 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
         public void run() {
             if (!save) return;
             save = false;
-            while (!saveLock.compareAndSet(false, true))
+            while (!saveLock.compareAndSet(false, true)) {
                 continue;
+            }
             try {
-                File f = new File(getDataFolder(), "EndReset.sav");
-                if (!f.exists()) f.createNewFile();
-                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));
+                final File f = new File(getDataFolder(), "EndReset.sav");
+                if (!f.exists()) {
+                    f.createNewFile();
+                }
+                final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));
 
                 out.writeInt(6);
                 out.writeObject(resetchunks);
@@ -434,7 +470,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
                 out.writeObject(suspendedTasks);
 
                 getServer().getScheduler().scheduleAsyncDelayedTask(EndReset.this, new AsyncSaveThread(out));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 saveLock.set(false);
                 getServer().getLogger().info("[" + getName() + "] can't write savefile!");
                 e.printStackTrace();
@@ -445,7 +481,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
     private class AsyncSaveThread implements Runnable {
         private final ObjectOutputStream out;
 
-        private AsyncSaveThread(ObjectOutputStream out) {
+        private AsyncSaveThread(final ObjectOutputStream out) {
             this.out = out;
         }
 
@@ -454,7 +490,7 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
             try {
                 out.flush();
                 out.close();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 getServer().getLogger().info("[" + getName() + "] can't write savefile!");
                 e.printStackTrace();
             }
@@ -463,53 +499,55 @@ public class EndReset extends JavaPlugin implements Listener, Runnable {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onEntityDeath(EntityDeathEvent event) {
-        Entity e = event.getEntity();
+    public void onEntityDeath(final EntityDeathEvent event) {
+        final Entity e = event.getEntity();
         if (!(e instanceof EnderDragon)) return;
-        World w = e.getWorld();
+        final World w = e.getWorld();
         if (w.getEnvironment() != Environment.THE_END) return;
-        String wn = w.getName();
+        final String wn = w.getName();
         if (dontHandle.contains(wn)) return;
         reg.add(wn);
         save = true;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onChunkLoad(ChunkLoadEvent event) {
+    public void onChunkLoad(final ChunkLoadEvent event) {
         if (event.getWorld().getEnvironment() != Environment.THE_END) return;
-        World world = event.getWorld();
-        String wn = world.getName();
+        final World world = event.getWorld();
+        final String wn = world.getName();
         HashMap<String, Long> worldMap;
-        if (resetchunks.containsKey(wn))
+        if (resetchunks.containsKey(wn)) {
             worldMap = resetchunks.get(wn);
-        else {
+        } else {
             worldMap = new HashMap<String, Long>();
             resetchunks.put(wn, worldMap);
         }
 
-        Chunk chunk = event.getChunk();
-        int x = chunk.getX();
-        int z = chunk.getZ();
-        String hash = x + "/" + z;
-        long cv = cvs.get(wn);
+        final Chunk chunk = event.getChunk();
+        final int x = chunk.getX();
+        final int z = chunk.getZ();
+        final String hash = x + "/" + z;
+        final long cv = cvs.get(wn);
 
         if (worldMap.containsKey(hash)) {
             if (worldMap.get(hash) != cv) {
-                for (Entity e : chunk.getEntities())
+                for (final Entity e : chunk.getEntities()) {
                     e.remove();
+                }
                 world.regenerateChunk(x, z);
                 worldMap.put(hash, cv);
                 save = true;
             }
-        } else
+        } else {
             worldMap.put(hash, cv);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onWorldLoad(WorldLoadEvent event) {
-        World w = event.getWorld();
+    public void onWorldLoad(final WorldLoadEvent event) {
+        final World w = event.getWorld();
         if (w.getEnvironment() != Environment.THE_END) return;
-        String wn = w.getName();
+        final String wn = w.getName();
         if (!cvs.containsKey(wn)) {
             cvs.put(wn, Long.MIN_VALUE);
             save = true;

@@ -3,7 +3,6 @@
  */
 package de.V10lator.EndReset;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -30,7 +29,7 @@ import org.bukkit.inventory.PlayerInventory;
 public class Actions {
     private final EndReset plugin;
 
-    public Actions(EndReset plugin) {
+    public Actions(final EndReset plugin) {
         this.plugin = plugin;
     }
 
@@ -43,13 +42,13 @@ public class Actions {
      * @param message
      *            メッセージ
      */
-    public static void message(CommandSender sender, String message) {
+    public static void message(final CommandSender sender, final String message) {
         if (sender != null && message != null) {
             sender.sendMessage(message.replaceAll("&([0-9a-fk-or])", "\u00A7$1"));
         }
     }
 
-    public static void message(Player player, String message) {
+    public static void message(final Player player, final String message) {
         if (player != null && message != null) {
             player.sendMessage(message.replaceAll("&([0-9a-fk-or])", "\u00A7$1"));
         }
@@ -75,10 +74,10 @@ public class Actions {
      * @param world
      * @param message
      */
-    public static void worldcastMessage(World world, String message) {
+    public static void worldcastMessage(final World world, String message) {
         if (world != null && message != null) {
             message = message.replaceAll("&([0-9a-fk-or])", "\u00A7$1");
-            for (Player player : world.getPlayers()) {
+            for (final Player player : world.getPlayers()) {
                 player.sendMessage(message);
             }
             System.out.println("[Worldcast][" + world.getName() + "]: " + message);
@@ -93,10 +92,10 @@ public class Actions {
      * @param message
      *            メッセージ
      */
-    public static void permcastMessage(String permission, String message) {
+    public static void permcastMessage(final String permission, final String message) {
         // OK
         int i = 0;
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+        for (final Player player : Bukkit.getServer().getOnlinePlayers()) {
             if (player.hasPermission(permission)) {
                 Actions.message(player, message);
                 i++;
@@ -118,10 +117,10 @@ public class Actions {
      *            区切り文字 通常は半角スペース
      * @return
      */
-    public static String combine(String[] s, String glue) {
-        int k = s.length;
-        if (k == 0) { return null; }
-        StringBuilder out = new StringBuilder();
+    public static String combine(final String[] s, final String glue) {
+        final int k = s.length;
+        if (k == 0) return null;
+        final StringBuilder out = new StringBuilder();
         out.append(s[0]);
         for (int x = 1; x < k; x++) {
             out.append(glue).append(s[x]);
@@ -134,7 +133,7 @@ public class Actions {
      * 
      * @param command
      */
-    public static void executeCommandOnConsole(String command) {
+    public static void executeCommandOnConsole(final String command) {
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
     }
 
@@ -146,10 +145,10 @@ public class Actions {
      * @return 1文字でも全角文字が含まれていればtrue 含まれていなければfalse
      * @throws UnsupportedEncodingException
      */
-    public static boolean containsZen(String s) throws UnsupportedEncodingException {
+    public static boolean containsZen(final String s) throws UnsupportedEncodingException {
         for (int i = 0; i < s.length(); i++) {
-            String s1 = s.substring(i, i + 1);
-            if (URLEncoder.encode(s1, "MS932").length() >= 4) { return true; }
+            final String s1 = s.substring(i, i + 1);
+            if (URLEncoder.encode(s1, "MS932").length() >= 4) return true;
         }
         return false;
     }
@@ -161,8 +160,8 @@ public class Actions {
      */
     public static String getDatetime() {
 
-        Date date = new Date();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Date date = new Date();
+        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return df.format(date);
     }
 
@@ -172,11 +171,11 @@ public class Actions {
      * @param loc
      * @return
      */
-    public static String getLocationString(Location loc) {
+    public static String getLocationString(final Location loc) {
         return loc.getWorld().getName() + ":" + loc.getX() + "," + loc.getY() + "," + loc.getZ();
     }
 
-    public static String getBlockLocationString(Location loc) {
+    public static String getBlockLocationString(final Location loc) {
         return loc.getWorld().getName() + ":" + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
     }
 
@@ -185,8 +184,8 @@ public class Actions {
      * 
      * @param msg
      */
-    public static void debug(String msg) {
-        OfflinePlayer syamn = Bukkit.getServer().getOfflinePlayer("syamn");
+    public static void debug(final String msg) {
+        final OfflinePlayer syamn = Bukkit.getServer().getOfflinePlayer("syamn");
         if (syamn.isOnline()) {
             Actions.message((Player) syamn, msg);
         }
@@ -199,7 +198,7 @@ public class Actions {
      *            文字列
      * @return 変換後の文字列
      */
-    public static String coloring(String string) {
+    public static String coloring(final String string) {
         if (string == null) return null;
         return string.replaceAll("&([0-9a-fA-Fk-oK-Or])", "\u00A7$1");
     }
@@ -208,20 +207,20 @@ public class Actions {
     /* その他 */
     /****************************************/
     // プレイヤーがオンラインかチェックしてテレポートさせる
-    public static void tpPlayer(Player player, Location loc) {
+    public static void tpPlayer(final Player player, final Location loc) {
         if (player == null || loc == null || !player.isOnline()) return;
         player.teleport(loc);
     }
 
     // プレイヤーのインベントリをその場にドロップさせる
-    public static void dropInventoryItems(Player player) {
+    public static void dropInventoryItems(final Player player) {
         if (player == null) return;
 
-        PlayerInventory inv = player.getInventory();
-        Location loc = player.getLocation();
+        final PlayerInventory inv = player.getInventory();
+        final Location loc = player.getLocation();
 
         // インベントリアイテム
-        for (ItemStack i : inv.getContents()) {
+        for (final ItemStack i : inv.getContents()) {
             if (i != null && i.getType() != Material.AIR) {
                 inv.remove(i);
                 player.getWorld().dropItemNaturally(loc, i);
@@ -229,7 +228,7 @@ public class Actions {
         }
 
         // 防具アイテム
-        for (ItemStack i : inv.getArmorContents()) {
+        for (final ItemStack i : inv.getArmorContents()) {
             if (i != null && i.getType() != Material.AIR) {
                 inv.remove(i);
                 player.getWorld().dropItemNaturally(loc, i);
@@ -247,10 +246,9 @@ public class Actions {
         if (loc == null) return null;
         final Block block = loc.getBlock();
         final int id = block.getTypeId();
-        if (id == Material.SIGN_POST.getId() || id == Material.WALL_SIGN.getId()) {
+        if (id == Material.SIGN_POST.getId() || id == Material.WALL_SIGN.getId())
             return (Sign) block.getState();
-        } else {
+        else
             return null;
-        }
     }
 }

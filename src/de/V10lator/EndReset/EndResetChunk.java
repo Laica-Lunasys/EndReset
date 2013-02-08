@@ -17,12 +17,13 @@ class EndResetChunk implements Serializable {
      * @param x
      * @param z
      */
-    public EndResetChunk(String world, int x, int z) {
+    public EndResetChunk(final String world, final int x, final int z) {
         this.world = world;
         this.x = x;
         this.z = z;
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -32,13 +33,14 @@ class EndResetChunk implements Serializable {
         return result;
     }
 
-    public boolean equals(Object obj) {
+    @Override
+    public boolean equals(final Object obj) {
         if (this == obj) return true;
 
         if (!(obj instanceof EndResetChunk)) return false;
 
-        EndResetChunk other = (EndResetChunk) obj;
-        if (world.equals(other.world) && x == other.x && z == other.z) { return true; }
+        final EndResetChunk other = (EndResetChunk) obj;
+        if (world.equals(other.world) && x == other.x && z == other.z) return true;
 
         return false;
     }
