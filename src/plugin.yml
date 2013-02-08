@@ -1,0 +1,14 @@
+##  Plugin Information  ##
+name: EndReset
+main: de.V10lator.EndReset.EndReset
+version: 1.1
+description: EndReset
+author: V10lator
+commands:
+  EndReset:
+    description: EndReset commands.
+    usage: <command> X
+permissions:
+  endreset.config:
+    description: use /EndReset
+    default: op

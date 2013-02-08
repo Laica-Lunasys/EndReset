@@ -28,3 +28,4 @@ target
 /*.gitignore
 lib
 .checkstyle/BookEditor
+bin
